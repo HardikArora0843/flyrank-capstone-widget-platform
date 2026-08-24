@@ -1,0 +1,64 @@
+name: flyrank-capstone-widget-platform
+version: "1.0.0"
+description: Multi-tenant embeddable widget & lead-capture platform with resilient ingest
+
+run: npm start
+seed: npm run seed
+test: npm test
+base_url: http://localhost:3000
+
+probes:
+  health:
+    path: /health
+    method: GET
+    expected_status: 200
+
+  widget_delivery:
+    path: /widget.v1.js
+    method: GET
+    expected_status: 200
+
+  public_config:
+    path: /api/widgets/66ee7055-c3bc-48de-aeff-beed31d73868/config
+    method: GET
+    expected_status: 200
+
+  public_submission:
+    path: /api/submissions
+    method: POST
+    expected_status: 201
+    payload:
+      widgetId: "66ee7055-c3bc-48de-aeff-beed31d73868"
+      data:
+        name: "Evaluator Probe"
+        email: "evaluator@flyrank.com"
+
+  honeypot_rejection:
+    path: /api/submissions
+    method: POST
+    expected_status: 400
+    payload:
+      widgetId: "66ee7055-c3bc-48de-aeff-beed31d73868"
+      data:
+        name: "Spam Probe"
+        email: "bot@spam.com"
+      _hp_website: "http://spam-trap-triggered.xyz"
+
+  oversized_payload:
+    path: /api/submissions
+    method: POST
+    expected_status: 413
+
+  auth_login:
+    path: /api/auth/login
+    method: POST
+    expected_status: 200
+    payload:
+      email: "admin@acme.com"
+      password: "password123"
+
+  dashboard_stats:
+    path: /api/dashboard/stats
+    method: GET
+    auth_required: true
+    expected_status: 200

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acme Customer Website — External Origin Demo</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9fafb;
+      color: #111827;
+    }
+    header {
+      background: #1e293b;
+      color: #ffffff;
+      padding: 24px;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      background: #3b82f6;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    main {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .callout {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 16px;
+      margin-bottom: 24px;
+      border-radius: 0 8px 8px 0;
+    }
+    code {
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="badge">Customer Origin: http://localhost:5500</span>
+    <h1>Welcome to BigTech SaaS Blog</h1>
+    <p>This page simulates an external customer website loading an embeddable widget cross-origin.</p>
+  </header>
+
+  <main>
+    <div class="callout">
+      <h3>Cross-Origin Lead Capture Demo</h3>
+      <p>
+        This external webpage is served from origin <code>http://localhost:5500</code>.
+        It embeds the lead-capture widget hosted on backend origin <code>http://localhost:3000</code>.
+      </p>
+    </div>
+
+    <article class="card">
+      <h2>The Future of Open Backend Infrastructure</h2>
+      <p>
+        Building resilient ingest APIs requires boundary validation, multi-provider geo-enrichment fallback chains,
+        asynchronous outbox job queues, and hardened rate limiting.
+      </p>
+      <p>
+        Scroll down to interact with our embedded newsletter signup form powered by FlyRank Widget Platform:
+      </p>
+
+      <!-- Target Container for Widget Injection -->
+      <div id="flyrank-widget-target"></div>
+    </article>
+  </main>
+
+  <!-- Embed Widget Script Tag -->
+  <!-- Note: When running seed.js, replace the ?id= parameter with the seeded widget ID if needed -->
+  <script src="http://localhost:3000/widget.v1.js?id=66ee7055-c3bc-48de-aeff-beed31d73868" id="flyrank-embed-script" async defer></script>
+
+  <script>
+    // Helper to dynamically update widget ID if passed in URL query e.g. http://localhost:5500/?widgetId=xyz
+    const params = new URLSearchParams(window.location.search);
+    const customWidgetId = params.get('widgetId');
+    if (customWidgetId) {
+      const script = document.getElementById('flyrank-embed-script');
+      if (script) {
+        script.src = 'http://localhost:3000/widget.v1.js?id=' + customWidgetId;
+      }
+    }
+  </script>
+</body>
+</html>
